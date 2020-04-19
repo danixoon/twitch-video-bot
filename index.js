@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const tmi = require("tmi.js");
 const util = require("util");
 const vlc = require("vlc.js");
 const fs = require("fs");
@@ -30,7 +31,8 @@ const bot = {
 const updatePlaylist = async () => {
   bot.player.empty();
 
-  await util.promisify(fs.readdir(VIDEO_FOLDER)).map((v) => bot.player.queue("file:///" + path.join(VIDEO_FOLDER, v)));
+  const dir = await util.promisify(fs.readdir)(VIDEO_FOLDER);
+  await Promise.all(dir.map((v) => bot.player.queue("file:///" + path.join(VIDEO_FOLDER, v))));
 
   const playlist = await bot.player.getPlaylist();
   playlist.children[0].children.forEach((v) => {
